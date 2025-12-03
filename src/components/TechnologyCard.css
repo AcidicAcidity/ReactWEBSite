@@ -1,0 +1,69 @@
+/* src/components/TechnologyCard.css */
+
+.technology-card {
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  background-color: #ffffff;
+  border: 2px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.technology-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.technology-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.technology-card-title {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #222;
+}
+
+.technology-card-status {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Состояния по статусам */
+.status-completed {
+  border-color: #4caf50;
+  background-color: #e8f5e9;
+}
+
+.status-completed .technology-card-status {
+  color: #2e7d32;
+}
+
+.status-in-progress {
+  border-color: #ff9800;
+  background-color: #fff3e0;
+}
+
+.status-in-progress .technology-card-status {
+  color: #ef6c00;
+}
+
+.status-not-started {
+  border-color: #90a4ae;
+  background-color: #eceff1;
+}
+
+.status-not-started .technology-card-status {
+  color: #546e7a;
+}
+
+.technology-card-description {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #555;
+}
