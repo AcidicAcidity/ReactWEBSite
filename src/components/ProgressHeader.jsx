@@ -1,4 +1,3 @@
-// src/components/ProgressHeader.jsx
 import './ProgressHeader.css';
 
 function ProgressHeader({ total, completed }) {

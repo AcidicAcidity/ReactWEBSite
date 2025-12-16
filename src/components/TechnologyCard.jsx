@@ -1,7 +1,6 @@
-// src/components/TechnologyCard.jsx
 import './TechnologyCard.css';
 
-function TechnologyCard({ title, description, status }) {
+function TechnologyCard({ id, title, description, status, onStatusClick }) {
   let statusText;
   let statusClass;
   let statusIcon;
@@ -25,8 +24,17 @@ function TechnologyCard({ title, description, status }) {
       break;
   }
 
+  const handleClick = () => {
+    if (onStatusClick) {
+      onStatusClick(id);
+    }
+  };
+
   return (
-    <div className={`technology-card ${statusClass}`}>
+    <div
+      className={`technology-card ${statusClass}`}
+      onClick={handleClick}
+    >
       <div className="technology-card-header">
         <h3 className="technology-card-title">{title}</h3>
         <span className="technology-card-status">
