@@ -1,4 +1,3 @@
-// src/useTechnologies.js
 import useLocalStorage from './useLocalStorage';
 
 // Начальные данные для технологий
@@ -10,6 +9,9 @@ const initialTechnologies = [
     status: 'not-started',
     notes: '',
     category: 'frontend',
+    difficulty: 'beginner',
+    deadline: '',
+    resources: ['https://react.dev'],
   },
   {
     id: 2,
@@ -18,6 +20,9 @@ const initialTechnologies = [
     status: 'not-started',
     notes: '',
     category: 'backend',
+    difficulty: 'beginner',
+    deadline: '',
+    resources: ['https://nodejs.org'],
   },
   {
     id: 3,
@@ -26,6 +31,9 @@ const initialTechnologies = [
     status: 'not-started',
     notes: '',
     category: 'frontend',
+    difficulty: 'beginner',
+    deadline: '',
+    resources: [],
   },
   {
     id: 4,
@@ -34,31 +42,61 @@ const initialTechnologies = [
     status: 'not-started',
     notes: '',
     category: 'database',
+    difficulty: 'beginner',
+    deadline: '',
+    resources: [],
   },
 ];
+
+function normalizeTechnology(tech) {
+  return {
+    id: tech.id ?? Date.now(),
+    title: tech.title ?? '',
+    description: tech.description ?? '',
+    status: tech.status ?? 'not-started',
+    notes: tech.notes ?? '',
+    category: tech.category ?? 'frontend',
+    difficulty: tech.difficulty ?? 'beginner',
+    deadline: tech.deadline ?? '',
+    resources: Array.isArray(tech.resources) ? tech.resources : [],
+  };
+}
 
 function useTechnologies() {
   const [technologies, setTechnologies] = useLocalStorage(
     'technologies',
-    initialTechnologies
+    initialTechnologies.map(normalizeTechnology)
   );
 
-  // Обновление статуса технологии в лоб (если понадобится)
-  const updateStatus = (techId, newStatus) => {
+  // Создание новой технологии
+  const createTechnology = (techData) => {
+    const newTech = normalizeTechnology({
+      ...techData,
+      id: Date.now(),
+      status: 'not-started',
+    });
+
+    setTechnologies((prev) => [...prev, newTech]);
+    return newTech;
+  };
+
+  // Обновление существующей технологии по id
+  const updateTechnology = (id, patch) => {
     setTechnologies((prev) =>
       prev.map((tech) =>
-        tech.id === techId ? { ...tech, status: newStatus } : tech
+        tech.id === id ? normalizeTechnology({ ...tech, ...patch }) : tech
       )
     );
   };
 
+  // Обновление статуса технологии в лоб
+  const updateStatus = (techId, newStatus) => {
+    updateTechnology(techId, { status: newStatus });
+  };
+
   // Обновление заметок
   const updateNotes = (techId, newNotes) => {
-    setTechnologies((prev) =>
-      prev.map((tech) =>
-        tech.id === techId ? { ...tech, notes: newNotes } : tech
-      )
-    );
+    updateTechnology(techId, { notes: newNotes });
   };
 
   // Циклическое переключение статуса (not-started → in-progress → completed → not-started)
@@ -75,22 +113,30 @@ function useTechnologies() {
     );
   };
 
-  // Массовый импорт технологий (из API / RoadmapImporter)
+  // Массовый импорт технологий (из API / JSON)
   const importTechnologies = (newTechs) => {
     setTechnologies((prev) => {
       const existingIds = new Set(prev.map((t) => t.id));
-
-      const filtered = newTechs.filter((t) => !existingIds.has(t.id));
-
-      const normalized = filtered.map((t) => ({
-        ...t,
-        // гарантируем наличие полей статуса и заметок в нашей модели
-        status: t.status ?? 'not-started',
-        notes: t.notes ?? '',
-      }));
-
+      const filtered = newTechs.filter(
+        (t) => t.id != null && !existingIds.has(t.id)
+      );
+      const normalized = filtered.map(normalizeTechnology);
       return [...prev, ...normalized];
     });
+  };
+
+  // Массовое изменение статусов (для самостоятельного задания)
+  const updateStatuses = (ids, newStatus) => {
+    setTechnologies((prev) =>
+      prev.map((tech) =>
+        ids.includes(tech.id) ? { ...tech, status: newStatus } : tech
+      )
+    );
+  };
+
+  // Полная замена списка технологий (для импорта)
+  const setAllTechnologies = (list) => {
+    setTechnologies(list.map(normalizeTechnology));
   };
 
   // Расчёт общего прогресса
@@ -104,10 +150,14 @@ function useTechnologies() {
 
   return {
     technologies,
+    createTechnology,
+    updateTechnology,
     updateStatus,
     updateNotes,
     toggleStatus,
     importTechnologies,
+    updateStatuses,
+    setAllTechnologies,
     progress: calculateProgress(),
   };
 }

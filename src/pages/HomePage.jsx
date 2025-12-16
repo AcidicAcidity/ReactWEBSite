@@ -1,3 +1,4 @@
+// src/pages/HomePage.jsx
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Greeting from '../Greeting';
@@ -7,6 +8,8 @@ import QuickActions from '../components/QuickActions';
 import FilterBar from '../components/FilterBar';
 import ProgressBar from '../components/ProgressBar';
 import RoadmapImporter from '../components/RoadmapImporter';
+import TechnologyForm from '../components/TechnologyForm';
+import Modal from '../components/Modal';
 import useTechnologies from '../useTechnologies';
 
 function HomePage() {
@@ -16,22 +19,22 @@ function HomePage() {
     updateNotes,
     progress,
     importTechnologies,
+    createTechnology,
   } = useTechnologies();
 
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const handleFilterChange = (filterId) => {
     setActiveFilter(filterId);
   };
 
-  // Фильтрация по статусу
   const filteredByStatus = technologies.filter((tech) => {
     if (activeFilter === 'all') return true;
     return tech.status === activeFilter;
   });
 
-  // Фильтрация по поиску (title + description)
   const filteredTechnologies = filteredByStatus.filter((tech) =>
     tech.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     tech.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -72,6 +75,19 @@ function HomePage() {
     alert(`Следующая технология для изучения: "${random.title}".`);
   };
 
+  const handleAddTechnologyClick = () => {
+    setIsAddModalOpen(true);
+  };
+
+  const handleAddTechnologySave = (data) => {
+    createTechnology(data);
+    setIsAddModalOpen(false);
+  };
+
+  const handleAddTechnologyCancel = () => {
+    setIsAddModalOpen(false);
+  };
+
   return (
     <div className="page">
       <Greeting />
@@ -94,10 +110,18 @@ function HomePage() {
         hasNotStarted={notStartedCount > 0}
       />
 
-      {/* Импорт дорожных карт и технологий из API */}
       <RoadmapImporter onImport={importTechnologies} />
 
-      <h2 className="app-title">Мои технологии</h2>
+      <div className="page-header">
+        <h2 className="app-title">Мои технологии</h2>
+        <button
+          className="btn-primary"
+          type="button"
+          onClick={handleAddTechnologyClick}
+        >
+          + Добавить технологию
+        </button>
+      </div>
 
       <div className="search-box">
         <input
@@ -117,7 +141,6 @@ function HomePage() {
       <div className="technology-list">
         {filteredTechnologies.map((tech) => (
           <div key={tech.id} className="technology-with-notes">
-            {/* Переход на детальную страницу по клику на карточку */}
             <Link to={`/technology/${tech.id}`} className="tech-title-link">
               <TechnologyCard
                 id={tech.id}
@@ -135,6 +158,17 @@ function HomePage() {
           </div>
         ))}
       </div>
+
+      <Modal
+        isOpen={isAddModalOpen}
+        onClose={handleAddTechnologyCancel}
+        title="Новая технология"
+      >
+        <TechnologyForm
+          onSave={handleAddTechnologySave}
+          onCancel={handleAddTechnologyCancel}
+        />
+      </Modal>
     </div>
   );
 }

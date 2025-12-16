@@ -1,0 +1,89 @@
+/* src/pages/DataImportExport.css */
+
+.data-import-export {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px 0 24px;
+}
+
+.data-import-export h1 {
+  margin-bottom: 16px;
+  font-size: 1.4rem;
+  color: #111827;
+}
+
+.status-message {
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background-color: #ecfdf5;
+  color: #065f46;
+  font-size: 0.9rem;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.controls button,
+.file-input-label {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background-color: #f9fafb;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.controls button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.file-input-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.drop-zone {
+  margin-top: 8px;
+  padding: 20px;
+  border-radius: 10px;
+  border: 2px dashed #d1d5db;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.9rem;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.drop-zone.dragging {
+  border-color: #4f46e5;
+  background-color: #eef2ff;
+  color: #312e81;
+}
+
+.technologies-list {
+  margin-top: 20px;
+}
+
+.technologies-list h2 {
+  margin-bottom: 8px;
+  font-size: 1rem;
+  color: #111827;
+}
+
+.technologies-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.technologies-list li {
+  padding: 4px 0;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #e5e7eb;
+}
