@@ -1,0 +1,35 @@
+.notes-section {
+  background-color: #f9fafb;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  border: 1px dashed #d1d5db;
+}
+
+.notes-section h4 {
+  margin: 0 0 6px 0;
+  font-size: 0.95rem;
+  color: #111827;
+}
+
+.notes-section textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 60px;
+  font-size: 0.9rem;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  outline: none;
+}
+
+.notes-section textarea:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.3);
+}
+
+.notes-hint {
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
