@@ -6,6 +6,7 @@ function Navigation() {
 
   const isActive = (path) =>
     location.pathname === path ||
+    // страница детализации считается частью «Все технологии»
     (path === '/technologies' && location.pathname.startsWith('/technology/'));
 
   return (
@@ -32,7 +33,22 @@ function Navigation() {
             Все технологии
           </Link>
         </li>
-        {/* Зарезервируем под «Добавить технологию» на будущее */}
+        <li>
+          <Link
+            to="/dashboard"
+            className={isActive('/dashboard') ? 'active' : ''}
+          >
+            Дашборд
+          </Link>
+        </li>
+        <li>
+          <Link
+            to="/data"
+            className={isActive('/data') ? 'active' : ''}
+          >
+            Данные
+          </Link>
+        </li>
       </ul>
     </nav>
   );
