@@ -1,3 +1,4 @@
+// src/useTechnologies.js
 import useLocalStorage from './useLocalStorage';
 
 // Начальные данные для технологий
@@ -42,7 +43,7 @@ function useTechnologies() {
     initialTechnologies
   );
 
-  // Обновление статуса технологии
+  // Обновление статуса технологии в лоб (если понадобится)
   const updateStatus = (techId, newStatus) => {
     setTechnologies((prev) =>
       prev.map((tech) =>
@@ -60,7 +61,7 @@ function useTechnologies() {
     );
   };
 
-  // Циклическое переключение статуса (оставим, чтобы не потерять клик по карточке)
+  // Циклическое переключение статуса (not-started → in-progress → completed → not-started)
   const toggleStatus = (techId) => {
     setTechnologies((prev) =>
       prev.map((tech) => {
@@ -72,6 +73,24 @@ function useTechnologies() {
         return { ...tech, status: next };
       })
     );
+  };
+
+  // Массовый импорт технологий (из API / RoadmapImporter)
+  const importTechnologies = (newTechs) => {
+    setTechnologies((prev) => {
+      const existingIds = new Set(prev.map((t) => t.id));
+
+      const filtered = newTechs.filter((t) => !existingIds.has(t.id));
+
+      const normalized = filtered.map((t) => ({
+        ...t,
+        // гарантируем наличие полей статуса и заметок в нашей модели
+        status: t.status ?? 'not-started',
+        notes: t.notes ?? '',
+      }));
+
+      return [...prev, ...normalized];
+    });
   };
 
   // Расчёт общего прогресса
@@ -88,6 +107,7 @@ function useTechnologies() {
     updateStatus,
     updateNotes,
     toggleStatus,
+    importTechnologies,
     progress: calculateProgress(),
   };
 }

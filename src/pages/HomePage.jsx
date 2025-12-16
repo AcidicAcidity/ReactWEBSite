@@ -1,12 +1,13 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Greeting from '../Greeting';
 import TechnologyCard from '../components/TechnologyCard';
 import TechnologyNotes from '../components/TechnologyNotes';
 import QuickActions from '../components/QuickActions';
 import FilterBar from '../components/FilterBar';
 import ProgressBar from '../components/ProgressBar';
+import RoadmapImporter from '../components/RoadmapImporter';
 import useTechnologies from '../useTechnologies';
-import { Link } from 'react-router-dom';
 
 function HomePage() {
   const {
@@ -14,6 +15,7 @@ function HomePage() {
     toggleStatus,
     updateNotes,
     progress,
+    importTechnologies,
   } = useTechnologies();
 
   const [activeFilter, setActiveFilter] = useState('all');
@@ -23,11 +25,13 @@ function HomePage() {
     setActiveFilter(filterId);
   };
 
+  // Фильтрация по статусу
   const filteredByStatus = technologies.filter((tech) => {
     if (activeFilter === 'all') return true;
     return tech.status === activeFilter;
   });
 
+  // Фильтрация по поиску (title + description)
   const filteredTechnologies = filteredByStatus.filter((tech) =>
     tech.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     tech.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -65,9 +69,7 @@ function HomePage() {
     }
     const random =
       notStarted[Math.floor(Math.random() * notStarted.length)];
-    alert(
-      `Следующая технология для изучения: "${random.title}".`
-    );
+    alert(`Следующая технология для изучения: "${random.title}".`);
   };
 
   return (
@@ -92,6 +94,9 @@ function HomePage() {
         hasNotStarted={notStartedCount > 0}
       />
 
+      {/* Импорт дорожных карт и технологий из API */}
+      <RoadmapImporter onImport={importTechnologies} />
+
       <h2 className="app-title">Мои технологии</h2>
 
       <div className="search-box">
@@ -112,7 +117,7 @@ function HomePage() {
       <div className="technology-list">
         {filteredTechnologies.map((tech) => (
           <div key={tech.id} className="technology-with-notes">
-            {/* Ссылка на детальную страницу */}
+            {/* Переход на детальную страницу по клику на карточку */}
             <Link to={`/technology/${tech.id}`} className="tech-title-link">
               <TechnologyCard
                 id={tech.id}
