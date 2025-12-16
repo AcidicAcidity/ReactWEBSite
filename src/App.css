@@ -71,3 +71,57 @@
   flex-direction: column;
   gap: 6px;
 }
+/* src/components/ProgressBar.css */
+
+.progress-bar-container {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.progress-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.progress-label {
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.progress-percentage {
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.progress-bar-inner.animated {
+  transition: width 0.5s ease-in-out;
+}
+.app-header {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+/* если не подключаешь отдельный ProgressBar.css */
+.progress-bar-container {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.progress-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.progress-label {
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.progress-percentage {
+  font-size: 0.85rem;
+  color: #4b5563;
+}

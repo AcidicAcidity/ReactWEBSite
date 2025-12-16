@@ -1,98 +1,61 @@
-import { useState, useEffect } from 'react';
+// src/App.jsx
+import { useState } from 'react';
 import './App.css';
 import Greeting from './Greeting';
 import TechnologyCard from './components/TechnologyCard';
-import ProgressHeader from './components/ProgressHeader';
+import TechnologyNotes from './components/TechnologyNotes';
 import QuickActions from './components/QuickActions';
 import FilterBar from './components/FilterBar';
-import TechnologyNotes from './components/TechnologyNotes';
+import ProgressBar from './components/ProgressBar';
+import useTechnologies from './useTechnologies';
 
 function App() {
-  const [technologies, setTechnologies] = useState([
-    {
-      id: 1,
-      title: 'React Components',
-      description: 'Изучение базовых компонентов',
-      status: 'not-started',
-      notes: '',
-    },
-    {
-      id: 2,
-      title: 'JSX Syntax',
-      description: 'Освоение синтаксиса JSX',
-      status: 'not-started',
-      notes: '',
-    },
-    {
-      id: 3,
-      title: 'State Management',
-      description: 'Работа с состоянием компонентов',
-      status: 'not-started',
-      notes: '',
-    },
-  ]);
+  const {
+    technologies,
+    toggleStatus,
+    updateNotes,
+    progress,
+  } = useTechnologies();
 
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const total = technologies.length;
-  const completedCount = technologies.filter(
-    (tech) => tech.status === 'completed'
-  ).length;
+  const handleFilterChange = (filterId) => {
+    setActiveFilter(filterId);
+  };
+
+  // Фильтрация по статусу
+  const filteredByStatus = technologies.filter((tech) => {
+    if (activeFilter === 'all') return true;
+    return tech.status === activeFilter;
+  });
+
+  // Фильтрация по поисковому запросу (title + description)
+  const filteredTechnologies = filteredByStatus.filter((tech) =>
+    tech.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    tech.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const notStartedCount = technologies.filter(
     (tech) => tech.status === 'not-started'
   ).length;
 
-  // Загружаем данные из localStorage при первом рендере
-  useEffect(() => {
-    const saved = localStorage.getItem('techTrackerData');
-    if (saved) {
-      setTechnologies(JSON.parse(saved));
-      console.log('Данные загружены из localStorage');
-    }
-  }, []);
-
-  // Сохраняем технологии в localStorage при любом изменении
-  useEffect(() => {
-    localStorage.setItem('techTrackerData', JSON.stringify(technologies));
-    console.log('Данные сохранены в localStorage');
-  }, [technologies]);
-
-  const cycleStatus = (status) => {
-    if (status === 'not-started') return 'in-progress';
-    if (status === 'in-progress') return 'completed';
-    return 'not-started';
-  };
-
-  const handleStatusToggle = (id) => {
-    setTechnologies((prev) =>
-      prev.map((tech) =>
-        tech.id === id
-          ? { ...tech, status: cycleStatus(tech.status) }
-          : tech
-      )
-    );
-  };
-
-  const updateTechnologyNotes = (techId, newNotes) => {
-    setTechnologies((prevTech) =>
-      prevTech.map((tech) =>
-        tech.id === techId ? { ...tech, notes: newNotes } : tech
-      )
-    );
-  };
-
   const handleMarkAllCompleted = () => {
-    setTechnologies((prev) =>
-      prev.map((tech) => ({ ...tech, status: 'completed' }))
-    );
+    // массовое завершение — простой вариант: крутим статусы до completed
+    technologies.forEach((tech) => {
+      if (tech.status !== 'completed') {
+        toggleStatus(tech.id);
+      }
+    });
   };
 
   const handleResetAll = () => {
-    setTechnologies((prev) =>
-      prev.map((tech) => ({ ...tech, status: 'not-started' }))
-    );
+    // массовый сброс — крутим статусы до not-started
+    technologies.forEach((tech) => {
+      if (tech.status !== 'not-started') {
+        toggleStatus(tech.id);
+      }
+    });
   };
 
   const handlePickRandom = () => {
@@ -112,25 +75,20 @@ function App() {
     );
   };
 
-  const handleFilterChange = (filterId) => {
-    setActiveFilter(filterId);
-  };
-
-  const filteredByStatus = technologies.filter((tech) => {
-    if (activeFilter === 'all') return true;
-    return tech.status === activeFilter;
-  });
-
-  const filteredTechnologies = filteredByStatus.filter((tech) =>
-    tech.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    tech.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   return (
     <div className="App">
       <Greeting />
 
-      <ProgressHeader total={total} completed={completedCount} />
+      <header className="app-header">
+        <h1>Трекер изучения технологий</h1>
+        <ProgressBar
+          progress={progress}
+          label="Общий прогресс"
+          color="#4CAF50"
+          animated={true}
+          height={20}
+        />
+      </header>
 
       <QuickActions
         onMarkAllCompleted={handleMarkAllCompleted}
@@ -139,7 +97,7 @@ function App() {
         hasNotStarted={notStartedCount > 0}
       />
 
-      <h2 className="app-title">Трекер изучения технологий</h2>
+      <h2 className="app-title">Мои технологии</h2>
 
       <div className="search-box">
         <input
@@ -164,12 +122,12 @@ function App() {
               title={tech.title}
               description={tech.description}
               status={tech.status}
-              onStatusClick={handleStatusToggle}
+              onStatusClick={toggleStatus}
             />
             <TechnologyNotes
               techId={tech.id}
               notes={tech.notes}
-              onNotesChange={updateTechnologyNotes}
+              onNotesChange={updateNotes}
             />
           </div>
         ))}
